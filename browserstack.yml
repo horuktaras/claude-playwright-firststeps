@@ -1,0 +1,35 @@
+# BrowserStack Playwright configuration
+# Docs: https://www.browserstack.com/docs/automate/playwright
+
+# Credentials — injected from environment variables, never hardcoded
+userName: ${BROWSERSTACK_USERNAME}
+accessKey: ${BROWSERSTACK_ACCESS_KEY}
+
+# Project / build labels — visible in the BrowserStack Automate dashboard
+projectName: claude-playwright-firststeps
+buildName: local-run
+buildTag: local
+
+# Which browsers + OSes to run on.
+# Each entry = one parallel "worker" on BrowserStack's cloud.
+# Java analogy: like @Parameters in TestNG driving a RemoteWebDriver matrix.
+browsers:
+  - browser: chrome
+    browser_version: latest
+    os: OS X
+    os_version: Sequoia
+  - browser: edge
+    browser_version: latest
+    os: Windows
+    os_version: 11
+
+# How many tests run in parallel across all browser slots
+parallelsPerPlatform: 1
+
+# Mirror the local Playwright timeout config
+browserStackLocal: false
+
+# Capture these on every test for the BrowserStack dashboard
+browserstackAutomateOptions:
+  networkLogs: true
+  consoleLogs: errors

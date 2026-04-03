@@ -8,6 +8,8 @@
     "test:regression": "playwright test --grep @regression",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
+    "test:bs": "browserstack-node-sdk playwright test",
+    "test:bs:smoke": "browserstack-node-sdk playwright test --grep @smoke",
     "report": "playwright show-report",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -21,6 +23,7 @@
   "devDependencies": {
     "@playwright/test": "^1.59.0",
     "@types/node": "^25.5.0",
+    "browserstack-node-sdk": "^1.50.9",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.8.1",
