@@ -117,7 +117,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # BrowserStack manages browsers remotely — no local browser install needed
+      # BrowserStack SDK still needs local browser binaries even though
+      # tests execute on BS cloud — the SDK uses them internally for patching
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
       - name: Run tests on BrowserStack
         run: npm run test:bs
         env:
