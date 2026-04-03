@@ -1,0 +1,14 @@
+node_modules/
+dist/
+
+# Playwright output — uploaded as CI artifacts, not committed to repo
+playwright-report/
+test-results/
+
+# IDE files
+.idea/
+.vscode/
+
+# Environment-specific — never commit secrets
+.env
+.env.local

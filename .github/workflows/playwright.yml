@@ -1,0 +1,84 @@
+name: Playwright Tests
+
+# When to run — like Jenkins triggers
+on:
+  push:
+    branches: [main, master] # run on every push to main
+  pull_request:
+    branches: [main, master] # run on every PR targeting main
+  workflow_dispatch: # allow manual runs from GitHub UI
+    inputs:
+      tags:
+        description: 'Test tag filter (e.g. @smoke, @regression)'
+        required: false
+        default: ''
+
+jobs:
+  test:
+    name: '${{ matrix.environment }} / ${{ matrix.browser }}'
+    runs-on: ubuntu-latest
+
+    # Matrix strategy — run the same job with different variable combinations
+    # Java analogy: parameterized TestNG suite with multiple configurations
+    strategy:
+      fail-fast: false # don't cancel other matrix jobs if one fails
+      matrix:
+        environment: [stage] # add 'prod' here to test multiple envs
+        browser: [chromium] # add 'firefox', 'webkit' for cross-browser
+
+    steps:
+      # 1. Check out the code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Set up Node.js — like setting JDK version in Maven workflows
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm' # cache node_modules between runs
+
+      # 3. Install dependencies (npm ci = clean install, like mvn clean install)
+      - name: Install dependencies
+        run: npm ci
+
+      # 3a. Lint + format check — fast gate before slow browser tests
+      # Fails the build immediately if code has errors or formatting issues
+      - name: Lint
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      # 4. Install only the browser we need for this matrix job
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      # 5. Run tests
+      # TAG_FILTER is set from workflow_dispatch input or defaults to empty (run all)
+      - name: Run Playwright tests
+        run: npx playwright test ${{ github.event.inputs.tags && format('--grep "{0}"', github.event.inputs.tags) || '' }}
+        env:
+          CI: true
+          ENV: ${{ matrix.environment }}
+
+      # 6. Publish test results to GitHub's native test results tab
+      # Shows pass/fail/skip counts + individual test names in the Actions UI
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: test-results/junit.xml
+
+      # 7. Upload HTML report + screenshots/videos/traces as a downloadable artifact
+      # Download from the Actions run page to debug failures locally:
+      # npx playwright show-report  (after unzipping)
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-${{ matrix.environment }}-${{ matrix.browser }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30
