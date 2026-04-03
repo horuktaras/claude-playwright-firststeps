@@ -18,6 +18,12 @@ jobs:
     name: '${{ matrix.environment }} / ${{ matrix.browser }}'
     runs-on: ubuntu-latest
 
+    # Required for publish-unit-test-result-action to post PR comments
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+
     # Matrix strategy — run the same job with different variable combinations
     # Java analogy: parameterized TestNG suite with multiple configurations
     strategy:
