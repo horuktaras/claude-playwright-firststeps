@@ -24,9 +24,9 @@ export default defineConfig({
   // - 'junit' produces XML that GitHub Actions parses for the test results tab
   reporter: process.env.CI
     ? [
-        ['github'],                                        // inline PR annotations
+        ['github'], // inline PR annotations
         ['junit', { outputFile: 'test-results/junit.xml' }], // GitHub test results tab
-        ['html', { open: 'never' }],                      // downloadable artifact
+        ['html', { open: 'never' }], // downloadable artifact
       ]
     : [['list'], ['html', { open: 'never' }]],
 
