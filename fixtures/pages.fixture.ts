@@ -3,6 +3,7 @@ import { LoginPage } from '../pages/LoginPage';
 import { SecurePage } from '../pages/SecurePage';
 import { CheckboxesPage } from '../pages/CheckboxesPage';
 import { DragAndDropPage } from '../pages/DragAndDropPage';
+import { IframePage } from '../pages/IframePage';
 
 // Define the shape of our custom fixtures
 // This is like declaring an interface for what gets injected
@@ -11,6 +12,7 @@ type PageFixtures = {
   securePage: SecurePage;
   checkboxesPage: CheckboxesPage;
   dragAndDropPage: DragAndDropPage;
+  iframePage: IframePage;
 };
 
 // base.extend<T>() = extend Playwright's built-in fixtures with ours
@@ -38,6 +40,10 @@ export const test = base.extend<PageFixtures>({
 
   dragAndDropPage: async ({ page }, use) => {
     await use(new DragAndDropPage(page));
+  },
+
+  iframePage: async ({ page }, use) => {
+    await use(new IframePage(page));
   },
 });
 
